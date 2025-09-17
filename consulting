@@ -1,0 +1,3 @@
+git mv 인덱스.html index.html
+git commit -m "Rename file to index.html"
+git push
