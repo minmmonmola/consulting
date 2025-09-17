@@ -2,38 +2,32 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>면접 대비 8분 타이머</title>
+  <title>8분 타이머</title>
   <style>
-    body { text-align:center; font-family:sans-serif; margin-top:100px; }
-    #time { font-size: 48px; margin:20px; }
-    button { padding: 10px 20px; font-size: 18px; }
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #timer { font-size: 48px; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h1>면접 대비 8분 타이머</h1>
-  <div id="time">08:00</div>
-  <button onclick="startTimer()">시작</button>
-  <audio id="alarm" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+  <h1>8분 타이머</h1>
+  <div id="timer">08:00</div>
 
   <script>
-    let timer;
-    function startTimer() {
-      let duration = 8 * 60; // 8분(초 단위)
-      const display = document.getElementById("time");
-      clearInterval(timer);
-      timer = setInterval(() => {
-        let minutes = Math.floor(duration / 60);
-        let seconds = duration % 60;
-        display.textContent = 
-          (minutes < 10 ? "0" : "") + minutes + ":" + 
-          (seconds < 10 ? "0" : "") + seconds;
-        if (--duration < 0) {
-          clearInterval(timer);
-          document.getElementById("alarm").play();
-          alert("시간 종료! 면접 답변 마무리하세요.");
-        }
-      }, 1000);
+    let time = 8 * 60; // 8분 = 480초
+    const timerElement = document.getElementById("timer");
+
+    function updateTimer() {
+      let minutes = Math.floor(time / 60);
+      let seconds = time % 60;
+      timerElement.textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+      if (time > 0) {
+        time--;
+      }
     }
+
+    setInterval(updateTimer, 1000); // 1초마다 업데이트
   </script>
 </body>
 </html>
