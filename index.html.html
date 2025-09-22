@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>면접 대비 타이머</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #phase { font-size: 32px; margin-bottom: 20px; font-weight: bold; }
+    #timer { font-size: 48px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>면접 대비 타이머</h1>
+  <div id="phase">곧 시작합니다...</div>
+  <div id="timer">00:00</div>
+
+  <script>
+    const phases = [
+      { name: "답변 준비 시간", duration: 8 * 60 }, // 8분
+      { name: "잠깐 준비 시간", duration: 10 },     // 10초
+      { name: "답변 시간", duration: 5 * 60 }       // 5분
+    ];
+
+    let currentPhase = 0;
+    let time = phases[currentPhase].duration;
+    const timerElement = document.getElementById("timer");
+    const phaseElement = document.getElementById("phase");
+
+    function updateTimer() {
+      let minutes = Math.floor(time / 60);
+      let seconds = time % 60;
+      timerElement.textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+      if (time > 0) {
+        time--;
+      } else {
+        currentPhase++;
+        if (currentPhase < phases.length) {
+          // 다음 단계로 전환
+          phaseElement.textContent = phases[currentPhase].name;
+          time = phases[currentPhase].duration;
+        } else {
+          // 모든 단계 종료
+          clearInterval(timerInterval);
+          phaseElement.textContent = "면접 종료!";
+          timerElement.textContent = "00:00";
+        }
+      }
+    }
+
+    // 초기 단계 설정
+    phaseElement.textContent = phases[currentPhase].name;
+    updateTimer();
+
+    const timerInterval = setInterval(updateTimer, 1000);
+  </script>
+</body>
+</html>
