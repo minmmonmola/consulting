@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>연세대 면접 대비 타이머</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #phase { font-size: 24px; margin: 10px; }
+    #timer { font-size: 48px; margin: 20px; }
+    button { padding: 10px 20px; font-size: 18px; margin: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>연세대 제시문 면접 대비 타이머</h1>
+  <div id="phase">준비되면 시작 버튼을 누르세요</div>
+  <div id="timer">00:00</div>
+  <button id="startBtn">시작</button>
+
+  <!-- 알람 소리 -->
+  <audio id="beep-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+  <script>
+    let timerElement = document.getElementById("timer");
+    let phaseElement = document.getElementById("phase");
+    let startBtn = document.getElementById("startBtn");
+    let currentTimer;
+
+    function playBeep() {
+      let sound = document.getElementById("beep-sound");
+      sound.currentTime = 0;
+      sound.play().catch(() => {
+        // 자동재생 차단 때문에 실패해도 무시하고 타이머는 계속 진행
+        console.log("사운드 재생 차단됨 (브라우저 정책)");
+      });
+    }
+
+    function startTimers() {
+      startBtn.disabled = true; // 중복 클릭 방지
+      runTimer(8*60, "제시문 읽기 (8분)", [
+        {time: 60, message: "⏰ 1분 남았습니다"},
+        {time: 10, message: "⏰ 10초 남았습니다"},
+        {time: 5, message: "⏰ 5초 남았습니다"}
+      ], () => {
+        playBeep();
+        alert("🔔 8분 종료!");
+        runTimer(10, "답변 준비 (10초)", [], () => {
+          playBeep();
+          alert("🔔 준비 시간 종료!");
+          runTimer(5*60, "답변하기 (5분)", [], () => {
+            playBeep();
+            alert("🔔 답변 시간 종료!");
+            startBtn.disabled = false; // 다 끝나면 다시 시작 가능
+          });
+        });
+      });
+    }
+
+    function runTimer(duration, phaseName, alerts, callback) {
+      clearInterval(currentTimer);
+      let timeLeft = duration;
+      phaseElement.textContent = phaseName;
+      updateDisplay(timeLeft);
+
+      currentTimer = setInterval(() => {
+        timeLeft--;
+        updateDisplay(timeLeft);
+
+        alerts.forEach(a => {
+          if (timeLeft === a.time) {
+            playBeep();
+            alert(a.message);
+          }
+        });
+
+        if (timeLeft <= 0) {
+          clearInterval(currentTimer);
+          callback();
+        }
+      }, 1000);
+    }
+
+    function updateDisplay(seconds) {
+      let min = String(Math.floor(seconds / 60)).padStart(2, "0");
+      let sec = String(seconds % 60).padStart(2, "0");
+      timerElement.textContent = `${min}:${sec}`;
+    }
+
+    // 버튼 이벤트 연결
+    startBtn.addEventListener("click", startTimers);
+  </script>
+</body>
+</html>
